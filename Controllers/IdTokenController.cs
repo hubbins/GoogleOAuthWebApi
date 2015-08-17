@@ -11,8 +11,10 @@ namespace GoogleOAuthWebApi.Controllers
 {
     public class IdTokenController : ApiController
     {
-        public IHttpActionResult SetToken([FromBody] string idToken)
+        public IHttpActionResult SetToken(JObject obj)
         {
+            string idToken = (string)obj["id_token"];
+
             string jsonResponse;
             using (var client = new WebClient())
             {
@@ -20,8 +22,6 @@ namespace GoogleOAuthWebApi.Controllers
             }
 
             JObject user = JObject.Parse(jsonResponse);
-            // verify aud
-            // sub is user id
 
             return Ok();
         }
