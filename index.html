@@ -1,12 +1,24 @@
 ﻿<html lang="en">
 <head>
-    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-scope" content="profile">
     <meta name="google-signin-client_id" content="174935365123-kpubv9ud1ke3fnunc00iudkrb1pmt8cu.apps.googleusercontent.com">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
     <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"></div>
+    <div>
+        <a href="#" onclick="signOut();">Sign out</a>
+        <script>
+            function signOut() {
+                var auth2 = gapi.auth2.getAuthInstance();
+                auth2.signOut().then(function () {
+                    console.log('User signed out.');
+                    sessionStorage.removeItem("token");     // remove our own token on sign out
+                });
+            }
+        </script>
+    </div>
     <script>
       function onSignIn(googleUser) {
         // Useful data for your client-side scripts:
@@ -20,12 +32,15 @@
         var id_token = googleUser.getAuthResponse().id_token;
         console.log("ID Token: " + id_token);
 
+        // change the google id token to our own token we can use going forward
         $.ajax({
             url: "api/IdToken",
             method: "POST",
             data: { id_token: id_token }
-        }).done(function () {
-            
+        }).done(function (data) {
+            console.log("my token: " + data);
+            // save our own token in session storage for future use
+            sessionStorage.setItem("token", data);
         });
       };
     </script>
